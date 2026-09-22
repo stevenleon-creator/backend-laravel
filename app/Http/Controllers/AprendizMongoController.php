@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Controller;
 use App\Models\AprendizMongo;
 use Illuminate\Http\Request;
 
@@ -10,7 +11,8 @@ class AprendizMongoController extends Controller
     // GET /api/aprendices-mongo
     public function index()
     {
-        return AprendizMongo::all();
+        $aprendices = AprendizMongo::all();
+        return response()->json($aprendices);
     }
 
     // POST /api/aprendices-mongo
@@ -21,23 +23,34 @@ class AprendizMongoController extends Controller
     }
 
     // GET /api/aprendices-mongo/{id}
-    public function show(string $id)
+    public function show($id)
     {
-        return AprendizMongo::findOrFail($id);
+        $aprendiz = AprendizMongo::find($id);
+        if (!$aprendiz) {
+            return response()->json(['message' => 'Aprendiz no encontrado'], 404);
+        }
+        return response()->json($aprendiz);
     }
 
     // PUT /api/aprendices-mongo/{id}
-    public function update(Request $request, string $id)
+    public function update(Request $request, $id)
     {
-        $aprendiz = AprendizMongo::findOrFail($id);
+        $aprendiz = AprendizMongo::find($id);
+        if (!$aprendiz) {
+            return response()->json(['message' => 'Aprendiz no encontrado'], 404);
+        }
         $aprendiz->update($request->all());
         return response()->json($aprendiz);
     }
 
     // DELETE /api/aprendices-mongo/{id}
-    public function destroy(string $id)
+    public function destroy($id)
     {
-        AprendizMongo::destroy($id);
-        return response()->json(null, 204);
+        $aprendiz = AprendizMongo::find($id);
+        if (!$aprendiz) {
+            return response()->json(['message' => 'Aprendiz no encontrado'], 404);
+        }
+        $aprendiz->delete();
+        return response()->json(['message' => 'Aprendiz eliminado correctamente']);
     }
-}   
+}
