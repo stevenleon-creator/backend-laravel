@@ -25,8 +25,9 @@ ENV APACHE_DOCUMENT_ROOT=/var/www/html/public
 RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf \
     && sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf
 
-# 4. Eliminar enlaces de otros MPM y habilitar mpm_prefork + mod_rewrite
-RUN rm -f /etc/apache2/mods-enabled/mpm_event.* /etc/apache2/mods-enabled/mpm_worker.* \
+# 4. Desactivar individualmente cada MPM antes de activar mpm_prefork
+RUN a2dismod mpm_event || true \
+    && a2dismod mpm_worker || true \
     && a2enmod mpm_prefork rewrite
 
 # 5. Instalar Composer copiando la imagen oficial
