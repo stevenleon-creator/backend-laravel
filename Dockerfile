@@ -1,6 +1,6 @@
 FROM php:8.3-apache
 
-# 1. Instalar dependencias del sistema necesarias
+# 1. Instalar dependencias del sistema necesarias (se añade libpq-dev)
 RUN apt-get update && apt-get install -y \
     git \
     curl \
@@ -12,10 +12,11 @@ RUN apt-get update && apt-get install -y \
     libzip-dev \
     libssl-dev \
     pkg-config \
+    libpq-dev \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# 2. Instalar extensiones de PHP (pdo_mysql para MySQL y mongodb via PECL)
-RUN docker-php-ext-install pdo pdo_mysql zip \
+# 2. Instalar extensiones de PHP (se añade pdo_pgsql y pgsql)
+RUN docker-php-ext-install pdo pdo_mysql pdo_pgsql pgsql zip \
     && pecl install mongodb \
     && docker-php-ext-enable mongodb
 
@@ -48,5 +49,3 @@ RUN chmod +x /entrypoint.sh
 
 EXPOSE 80
 ENTRYPOINT ["/entrypoint.sh"]
-
-EXPOSE 80
