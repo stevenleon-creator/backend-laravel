@@ -1,9 +1,11 @@
 #!/bin/sh
-set -e
 
-# Ajustar Apache para escuchar en el puerto que Render asigna
-sed -i "s/80/${PORT:-80}/g" /etc/apache2/ports.conf /etc/apache2/sites-available/*.conf
+# Limpiar caché de configuración y optimizar Laravel
+php artisan config:clear
+php artisan route:clear
 
+# Ejecutar las migraciones en producción
 php artisan migrate --force
 
-apache2-foreground
+# Arrancar Apache en primer plano (¡es fundamental el uso de 'exec'!)
+exec apache2-foreground
